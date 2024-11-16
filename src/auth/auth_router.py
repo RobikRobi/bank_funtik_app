@@ -7,7 +7,8 @@ from sqlalchemy import select
 from .auth_models import User
 from ..database import get_session
 from .auth_shema import UserShow
-from .auth_utils import creat_access_token, decode_access_token
+from .auth_utils import creat_access_token, valid_access_token
+from ..get_current_user import get_current_user
 
 app = APIRouter()
 
@@ -23,18 +24,19 @@ def register_user(username: str, password: str, session: Session = Depends(get_s
 def login_user(username:str, password:str, session:Session = Depends(get_session)):
     user = session.scalar(select(User).where(User.username == username, User.password == password))
     if user:
-        token = creat_access_token(user_id=user.id)
+        token = creat_access_token(user_id=int(user.id))
         return{"msg":"Login successful", "token":token}
     else:
         return{"msg":"Invalid username or password"}
     
 @app.get("/decode_token")
 def decode_token(token:str):
-    data = decode_access_token(token)
+    data = valid_access_token(token)
     return{"msg":"Token decode successfully", "data":data}
 
 
 @app.get("/users", response_model=list[UserShow])
-def read_users(session:Session = Depends(get_session)):
-    users = session.scalars(select(User)).all()
-    return users
+def read_users(user:User = Depends(get_current_user), session:Session = Depends(get_session)):
+
+            users = session.scalars(select(User)).all()
+            return users

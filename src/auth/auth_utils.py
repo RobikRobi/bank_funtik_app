@@ -1,10 +1,37 @@
 import jwt
+from ..config import configtoken
+import datetime
+from fastapi import HTTPException
 
-def creat_access_token(user_id:int):
-    payload = {'user_id': user_id}
-    access_token = jwt.encode(payload, 'secret', algorithm='HS256')
+
+def creat_access_token(
+    user_id: int,
+    algorithm: str = configtoken.algorithm,
+    private_key: str = configtoken.private_key.read_text()
+) -> str:
+    payload = {
+        "user_id": user_id,
+        "exp": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=configtoken.days)).timestamp()}
+    
+    access_token = jwt.encode(payload=payload, algorithm=algorithm, key=private_key)
     return access_token
 
-def decode_access_token(access_token: str | bytes):
-    data = jwt.decode(access_token, algorithms=['HS256'])
-    return data
+def valid_access_token(
+    token: str, 
+    algorithm: str = configtoken.algorithm,
+    public_key: str = configtoken.public_key.read_text()
+) -> int:
+    try:
+        # Декодирование и проверка токена
+        payload = jwt.decode(jwt=token, key=public_key, algorithms=[algorithm])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token.")
+
+    # Проверка срока действия токена
+    exp = payload.get("exp")
+    if exp and exp > datetime.datetime.now(datetime.timezone.utc).timestamp():
+        return payload.get("user_id")
+    
+    raise HTTPException(status_code=401, detail="Token has expired.")
