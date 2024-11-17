@@ -15,10 +15,5 @@ def get_session():
 class Base(DeclarativeBase):
     pass
 
-
-
-
-
-
 Base.metadata.create_all(engine)
 

@@ -1,8 +1,15 @@
 import jwt
+import bcrypt
 from ..config import configtoken
 import datetime
 from fastapi import HTTPException
 
+def decode_password(password:str) -> bytes:
+    new_password = bcrypt.hashpw(password=password.encode(), salt=bcrypt.gensalt())
+    return new_password
+
+def check_password(password: str, old_password: bytes) -> bool:
+    return bcrypt.checkpw(password=password.encode(), hashed_password=old_password)
 
 def creat_access_token(
     user_id: int,
