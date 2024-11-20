@@ -12,6 +12,11 @@ class User(Base):
     phone: Mapped[str]
     username: Mapped[str]
     password: Mapped[bytes]
+
+    # is_user:Mapped[bool] = mapped_column(default=True, nullable=False )
+    # is_admin:Mapped[bool] = mapped_column(default=False, nullable=False)
+
+    # extend_existing = True
     
     def __init__(self, name, surname, email, phone, username, password):
         self.name = name

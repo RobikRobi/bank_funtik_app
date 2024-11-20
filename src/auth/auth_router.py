@@ -8,7 +8,7 @@ from .auth_models import User
 from ..database import get_session
 from .auth_shema import UserShow
 from .auth_utils import creat_access_token, valid_access_token, decode_password, check_password
-from ..get_current_user import get_current_user
+from ..get_current_user import get_current_user, get_current_id
 
 app = APIRouter()
 
@@ -21,6 +21,7 @@ def register_user(name: str, surname: str, email: str, phone: str, password: str
     session.commit()
     return{"msg":"User registred successfully"}
 
+
 @app.post("/login")
 def login_user(username:str, password:str, session:Session = Depends(get_session)):
     user = session.scalar(select(User).where(User.username == username))
@@ -29,6 +30,7 @@ def login_user(username:str, password:str, session:Session = Depends(get_session
             token = creat_access_token(user_id=int(user.id))
             return{"msg":"Login successful", "token":token}
     return{"msg":"Invalid username or password"}
+  
     
 @app.get("/decode_token")
 def decode_token(token:str):
@@ -36,8 +38,6 @@ def decode_token(token:str):
     return{"msg":"Token decode successfully", "data":data}
 
 
-@app.get("/users", response_model=list[UserShow])
-def read_users(user:User = Depends(get_current_user), session:Session = Depends(get_session)):
-
-            users = session.scalars(select(User)).all()
-            return users
+@app.get("/me")
+def get_me(user_data:User = Depends(get_current_user), session:Session = Depends(get_session)):
+            return user_data
