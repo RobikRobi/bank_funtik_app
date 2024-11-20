@@ -4,7 +4,7 @@ from ..config import configtoken
 import datetime
 from fastapi import HTTPException
 
-def decode_password(password:str) -> bytes:
+def encode_password(password:str) -> bytes:
     new_password = bcrypt.hashpw(password=password.encode(), salt=bcrypt.gensalt())
     return new_password
 

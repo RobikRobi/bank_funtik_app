@@ -9,3 +9,8 @@ class UserShow(BaseModel):
     username: str
     # password: str
 
+class UserUpdate(BaseModel):
+    name: str=None
+    surname: str=None
+    phone: str=None
+    password: str=None
