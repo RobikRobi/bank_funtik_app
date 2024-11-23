@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..accounts.account_models import Account
 
+# модель таблицы Транзакции
 class Transaction(Base):
     __tablename__ = 'transactions'
 

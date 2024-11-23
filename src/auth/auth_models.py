@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..accounts.account_models import Account
 
-
+# модель таблицы с пользователями
 class User(Base):
     __tablename__ = "users"
 

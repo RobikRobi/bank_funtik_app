@@ -12,7 +12,7 @@ from ..get_current_user import get_current_user, get_current_id
 
 app = APIRouter(prefix="/users", tags=["Users"])
 
-
+# регистрация пользователя
 @app.post("/register")
 def register_user(user_reg: UserRegister, session: Session = Depends(get_session)):
     h_password = encode_password(user_reg.password)
@@ -21,7 +21,7 @@ def register_user(user_reg: UserRegister, session: Session = Depends(get_session
     session.commit()
     return{"msg":"User registred successfully"}
 
-
+# авторизация пользователя
 @app.post("/login")
 def login_user(email:str, password:str, session:Session = Depends(get_session)):
     user = session.scalar(select(User).where(User.email == email))
@@ -30,11 +30,14 @@ def login_user(email:str, password:str, session:Session = Depends(get_session)):
             token = creat_access_token(user_id=int(user.id))
             return{"msg":"Login successful", "token":token}
     return{"msg":"Invalid username or password"}
-  
+
+
+# получение данных пользователя
 @app.get("/me")
 def get_me(user_data:User = Depends(get_current_user), session:Session = Depends(get_session)):
             return user_data
 
+# измененние данных пользователя по id
 @app.put("/{user_id}")
 def user_update(user_id: int, user_update: UserUpdate, session:Session = Depends(get_session)):
     user = session.scalar(select(User).filter(User.id == user_id))

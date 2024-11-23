@@ -4,15 +4,16 @@ from ..config import configtoken
 import datetime
 from fastapi import HTTPException
 
+# хэширование пароля
 def encode_password(password:str) -> bytes:
     new_password = bcrypt.hashpw(password=password.encode(), salt=bcrypt.gensalt())
     return new_password
 
-
+# проверка пароля
 def check_password(password: str, old_password: bytes) -> bool:
     return bcrypt.checkpw(password=password.encode(), hashed_password=old_password)
 
-
+# создание токена
 def creat_access_token(
     user_id: int,
     algorithm: str = configtoken.algorithm,
