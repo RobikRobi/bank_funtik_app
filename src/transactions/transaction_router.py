@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .transaction_models import Transaction
 from .transaction_shema import TransactionCreate
 from ..database import get_session
 from ..auth.auth_models import User
-from .account_models import Account
+from ..accounts.account_models import Account
 from ..get_current_user import get_current_user
 from typing import List
 

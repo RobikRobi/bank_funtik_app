@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .account_models import Account
-from .account_shema import AccountCreate, AccountUpdate
+from .account_shema import AccountCreate
 from ..database import get_session
 from ..auth.auth_models import User
 from ..get_current_user import get_current_user
@@ -9,7 +9,8 @@ from typing import List
 
 app = APIRouter(prefix="/accounts", tags=["Accounts"])
 
-@app.post("/", response_model=Account)
+# , response_model=Account
+@app.post("/")
 def create_account(account_create: AccountCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     account = Account(owner_id=current_user.id, currency=account_create.currency)
     session.add(account)
@@ -17,7 +18,7 @@ def create_account(account_create: AccountCreate, session: Session = Depends(get
     session.refresh(account)
     return account
 
-@app.get("/", response_model=List[Account])
+@app.get("/")
 def list_accounts(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     accounts = session.query(Account).filter(Account.owner_id == current_user.id).all()
     return accounts

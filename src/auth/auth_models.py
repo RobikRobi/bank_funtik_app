@@ -1,8 +1,12 @@
+from sqlalchemy import ForeignKey
 from sqlalchemy import text
 from ..database import Base
-from account.account_models import Account, Transaction
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..accounts.account_models import Account
+
 
 class User(Base):
     __tablename__ = "users"
@@ -18,7 +22,7 @@ class User(Base):
     is_user: Mapped[bool] = mapped_column(default=True, server_default=text('true'), nullable=False)
     is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
 
-    account: Mapped[list["Account"]] = relationship(uselist=True, back_populates="users")
+    users: Mapped[list["Account"]] = relationship(uselist=True, back_populates="owner")
 
     # extend_existing = True
     
