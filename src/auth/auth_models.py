@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..accounts.account_models import Account
 
-# модель таблицы с пользователями
+# модель таблицы с данными пользователей
 class User(Base):
     __tablename__ = "users"
 
@@ -21,7 +21,7 @@ class User(Base):
 
     is_user: Mapped[bool] = mapped_column(default=True, server_default=text('true'), nullable=False)
     is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
-
+# связь one to many для связи пользователя со счетами
     users: Mapped[list["Account"]] = relationship(uselist=True, back_populates="owner")
 
     # extend_existing = True

@@ -10,6 +10,7 @@ from typing import List
 
 app = APIRouter(prefix="/transactions", tags=["Transactions"])
 
+# запрос для перевода между счетами пользователя
 @app.post("/")
 def make_transaction(transaction_create: TransactionCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     sender_account = session.query(Account).filter(Account.id == transaction_create.sender_id, Account.owner_id == current_user.id).first()

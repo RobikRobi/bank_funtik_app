@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+# схема для перводов
 class TransactionCreate(BaseModel):
     sender_id: int = Field(...)
     recipient_id: int = Field(..., gt=-1)

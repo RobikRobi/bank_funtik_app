@@ -6,6 +6,7 @@ from ..database import Base
 if TYPE_CHECKING:
     from ..auth.auth_models import User
 
+# модель таблицы для сохранения данных о счетах
 class Account(Base):
     __tablename__ = 'accounts'
 

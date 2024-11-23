@@ -9,7 +9,7 @@ from typing import List
 
 app = APIRouter(prefix="/accounts", tags=["Accounts"])
 
-# , response_model=Account
+#создание счёта
 @app.post("/")
 def create_account(account_create: AccountCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     account = Account(owner_id=current_user.id, currency=account_create.currency, balance=account_create.balance)
@@ -18,11 +18,13 @@ def create_account(account_create: AccountCreate, session: Session = Depends(get
     session.refresh(account)
     return account
 
+# получение сведений о всех счетах пользователя
 @app.get("/")
 def list_accounts(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     accounts = session.query(Account).filter(Account.owner_id == current_user.id).all()
     return accounts
 
+# получения данных о балансе определённого счёта
 @app.get("/{account_id}/balance", response_model=float)
 def get_balance(account_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     account = session.query(Account).filter(Account.id == account_id, Account.owner_id == current_user.id).first()
@@ -30,6 +32,7 @@ def get_balance(account_id: int, session: Session = Depends(get_session), curren
         raise HTTPException(status_code=404, detail="Account not found")
     return account.balance
 
+# пополнение счёта
 @app.put("/{account_id}/deposit")
 def deposit_to_account(account_id: int, account_update: AccountUpdate, 
                        session: Session = Depends(get_session), 
@@ -44,6 +47,7 @@ def deposit_to_account(account_id: int, account_update: AccountUpdate,
 
     return {"message": f"Deposit of {account_update.balance} to account {account_id}"}
 
+# удаление счёта
 @app.delete("/{account_id}")
 def close_account(account_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     account = session.query(Account).filter(Account.id == account_id, Account.owner_id == current_user.id).first()
