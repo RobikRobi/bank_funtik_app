@@ -21,7 +21,7 @@ def create_account(account_create: AccountCreate, session: Session = Depends(get
 # получение сведений о всех счетах пользователя
 @app.get("/")
 def list_accounts(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
-    accounts = session.query(Account).filter(Account.owner_id == current_user.id).all()
+    accounts = session.scalars(Account).filter(Account.owner_id == current_user.id).all()
     return accounts
 
 # получения данных о балансе определённого счёта
