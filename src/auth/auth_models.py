@@ -1,4 +1,3 @@
-from sqlalchemy import ForeignKey
 from sqlalchemy import text
 from ..database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,7 +23,7 @@ class User(Base):
 # связь one to many для связи пользователя со счетами
     users: Mapped[list["Account"]] = relationship(uselist=True, back_populates="owner")
 
-    # extend_existing = True
+
     
     def __init__(self, email, password, name, surname,  phone):
         self.email = email

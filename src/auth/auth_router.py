@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -7,8 +6,8 @@ from sqlalchemy import select
 from .auth_models import User
 from ..database import get_session
 from .auth_shema import UserUpdate, UserRegister
-from .auth_utils import creat_access_token, valid_access_token, encode_password, check_password
-from ..get_current_user import get_current_user, get_current_id
+from .auth_utils import creat_access_token, encode_password, check_password
+from ..get_current_user import get_current_user
 
 app = APIRouter(prefix="/users", tags=["Users"])
 

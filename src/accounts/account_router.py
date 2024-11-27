@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .account_models import Account
 from .account_shema import AccountCreate, AccountUpdate
 from ..database import get_session
 from ..auth.auth_models import User
 from ..get_current_user import get_current_user
-from typing import List
+
 
 app = APIRouter(prefix="/accounts", tags=["Accounts"])
 

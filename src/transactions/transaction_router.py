@@ -6,14 +6,16 @@ from ..database import get_session
 from ..auth.auth_models import User
 from ..accounts.account_models import Account
 from ..get_current_user import get_current_user
-from typing import List
 
 app = APIRouter(prefix="/transactions", tags=["Transactions"])
 
 # запрос для перевода между счетами пользователя
 @app.post("/")
-def make_transaction(transaction_create: TransactionCreate, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
-    sender_account = session.query(Account).filter(Account.id == transaction_create.sender_id, Account.owner_id == current_user.id).first()
+def make_transaction(transaction_create: TransactionCreate, 
+                     session: Session = Depends(get_session), 
+                     current_user: User = Depends(get_current_user)):
+    sender_account = session.query(Account).filter(Account.id == transaction_create.sender_id,
+                                                    Account.owner_id == current_user.id).first()
     if not sender_account:
         raise HTTPException(status_code=404, detail="Sender account not found")
     if sender_account.balance < transaction_create.amount:

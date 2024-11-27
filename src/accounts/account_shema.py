@@ -8,3 +8,7 @@ class AccountCreate(BaseModel):
 # схема для пополнения баланса счёта
 class AccountUpdate(BaseModel):
     balance: float = Field(ge=0.0)
+
+
+
+    

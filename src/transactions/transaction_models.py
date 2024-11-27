@@ -20,3 +20,6 @@ class Transaction(Base):
 
     sender: Mapped["Account"] = relationship( foreign_keys=[sender_account_id], backref='sent_transactions')
     recipient: Mapped["Account"] = relationship( foreign_keys=[recipient_account_id], backref='received_transactions')
+
+
+    
