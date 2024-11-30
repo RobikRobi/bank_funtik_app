@@ -1,4 +1,5 @@
 __pycache__
 .env
 venv
-tokens
+private_key.pem
+public_key.pem
