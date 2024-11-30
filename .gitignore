@@ -1,5 +1,4 @@
 __pycache__
 .env
 venv
-private_key.pem
-public_key.pem
+src/auth/tokens
