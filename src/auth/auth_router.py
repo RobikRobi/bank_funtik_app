@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from .auth_models import User
 from ..database import get_session
-from .auth_shema import UserUpdate, UserRegister
+from .auth_shema import UserUpdate, UserRegister, UserBase
 from .auth_utils import creat_access_token, encode_password, check_password
 from ..get_current_user import get_current_user
 
@@ -57,3 +57,14 @@ def user_update(user_id: int, user_update: UserUpdate, session:Session = Depends
     session.refresh(user)
 
     return {"message": f"User with ID {user_id} updated successfully"}
+
+# метод для пользователья с ролью администратор
+def get_current_admin_user(current_user: UserBase = Depends(get_current_user), session: Session = Depends(get_session)):
+    if current_user.is_admin:
+        return current_user
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Недостаточно прав!')
+
+# запрос на получение всех пользователей
+@app.get("/all_users/")
+def get_all_users(user_data: User = Depends(get_current_admin_user)):
+    return User.find_all()

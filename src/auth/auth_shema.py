@@ -8,6 +8,18 @@ class UserUpdate(BaseModel):
     phone: str=None
     password: str=None
 
+class UserBase(BaseModel):
+    email: EmailStr
+    password: str
+    name: str
+    surname: str
+    phone: str
+
+    is_user: bool
+    Is_admin: bool
+
+    
+
 # схема для регистрации пользователя
 class UserRegister(BaseModel):
     email: EmailStr = Field(..., description="e-mail")

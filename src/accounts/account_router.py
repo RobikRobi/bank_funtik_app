@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from .account_models import Account
 from .account_shema import AccountCreate, AccountUpdate
 from ..database import get_session
@@ -21,13 +22,14 @@ def create_account(account_create: AccountCreate, session: Session = Depends(get
 # получение сведений о всех счетах пользователя
 @app.get("/")
 def list_accounts(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
-    accounts = session.scalars(Account).filter(Account.owner_id == current_user.id).all()
+    stmt = select(Account)
+    accounts = session.query(Account).filter(Account.owner_id == current_user.id).all()
     return accounts
 
 # получения данных о балансе определённого счёта
 @app.get("/{account_id}/balance", response_model=float)
 def get_balance(account_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
-    account = session.query(Account).filter(Account.id == account_id, Account.owner_id == current_user.id).first()
+    account = session.scalar(select(Account).filter(Account.id == account_id, Account.owner_id == current_user.id))
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     return account.balance
@@ -37,7 +39,7 @@ def get_balance(account_id: int, session: Session = Depends(get_session), curren
 def deposit_to_account(account_id: int, account_update: AccountUpdate, 
                        session: Session = Depends(get_session), 
                        current_user: User = Depends(get_current_user)):
-    account = session.query(Account).filter(Account.id == account_id, Account.owner_id == current_user.id).first()
+    account = session.scalar(select(Account).filter(Account.id == account_id, Account.owner_id == current_user.id))
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
@@ -50,7 +52,7 @@ def deposit_to_account(account_id: int, account_update: AccountUpdate,
 # удаление счёта
 @app.delete("/{account_id}")
 def close_account(account_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
-    account = session.query(Account).filter(Account.id == account_id, Account.owner_id == current_user.id).first()
+    account = session.scalar(select(Account).filter(Account.id == account_id, Account.owner_id == current_user.id))
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     if account.balance != 0.0:
@@ -58,3 +60,4 @@ def close_account(account_id: int, session: Session = Depends(get_session), curr
     session.delete(account)
     session.commit()
     return {"message": f"Account with ID {account_id} closed successfully"}
+

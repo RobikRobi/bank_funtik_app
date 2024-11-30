@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from .database import get_session
 from .auth.auth_models import User
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from .auth.auth_utils import valid_access_token
 
 bearer = HTTPBearer()
@@ -29,4 +28,3 @@ def get_current_user(user_id = Depends(get_current_id), session: Session = Depen
         })
     
     return user
-
